@@ -47,16 +47,17 @@ make_image() {
         mkdir -p ${tmp_armbian} ${tmp_build} ${tmp_outpath} ${armbian_outputpath} ${tmp_aml_image} && sync
 
         # Get kernel version
-        armbian_version=$(ls ${armbian_outputpath}/*.img 2>/dev/null | awk -F_ '{print $NF}')
+        armbian_version=$(ls ${armbian_outputpath}/*.img 2>/dev/null | awk -F "_" '{print $NF}')
         KERNEL_VERSION=$(echo ${armbian_version} | grep -oE '[1-9].[0-9]{1,3}.[0-9]{1,3}' 2>/dev/null)
         #echo -e "Kernel version: [ ${KERNEL_VERSION} ]"
 
         # Get armbian release
-        armbian_release=$(ls ${armbian_outputpath}/*.img 2>/dev/null | awk -F- '{print $1}')
-        RELEASE_VERSION=$(echo ${armbian_release} | grep -oE '[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}' 2>/dev/null)
+        current_release=$(ls ${armbian_outputpath}/*.img 2>/dev/null | awk -F "trunk" '{print $1}')
+        OUT_RELEASE=$(echo ${current_release} | grep -oE '[1-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}' 2>/dev/null)
+        #echo -e "OUT_RELEASE: ${OUT_RELEASE}"
 
         # Make Amlogic s9xxx armbian
-        build_image_file="${tmp_outpath}/Armbian_${RELEASE_VERSION}_Aml_${build_soc}_buster_${KERNEL_VERSION}_$(date +"%Y.%m.%d.%H%M").img"
+        build_image_file="${tmp_outpath}/Armbian_${OUT_RELEASE}_Aml_${build_soc}_buster_${KERNEL_VERSION}_$(date +"%Y.%m.%d.%H%M").img"
         rm -f ${build_image_file}
         sync
 
